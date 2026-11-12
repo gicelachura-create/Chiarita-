@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rat-ito | English Adventure</title>
+<style>
+:root{--cream:#fff8e8;--brown:#593d2b;--orange:#f4a340;--yellow:#ffda67;--green:#5e9b68;--pink:#f3b6a7;--white:#fff;--shadow:0 5px 18px #593d2b18}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--brown);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+button,textarea,input{font:inherit}button{cursor:pointer;border:0;border-radius:14px;padding:11px 16px;background:var(--orange);color:#402918;font-weight:700;box-shadow:var(--shadow)}button:active{transform:scale(.98)}button.secondary{background:#f1e6d1}button.green{background:var(--green);color:white}
+header{background:#fffdf6;border-bottom:2px solid #f1e3c9;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:2}
+.brand{font-size:1.3rem;font-weight:900}.brand span{color:#d88727}.points{background:#fff0c3;border-radius:20px;padding:8px 12px;font-weight:800}
+nav{display:flex;gap:7px;padding:10px;overflow-x:auto;background:#fffdf6;position:sticky;top:58px;z-index:2}
+nav button{white-space:nowrap;background:transparent;box-shadow:none;border:1px solid transparent;padding:9px 12px}nav button.active{background:#ffedbd;border-color:#f2d17d}
+main{max-width:900px;margin:auto;padding:18px 14px 40px}.screen{display:none}.screen.active{display:block}
+.card{background:white;border:1px solid #f1e6d2;border-radius:22px;padding:18px;margin:12px 0;box-shadow:var(--shadow)}
+.hero{text-align:center;padding:25px 18px;background:linear-gradient(145deg,#fff0c2,#fffaf0)}
+.rat{font-size:90px;line-height:1.25;display:inline-block;animation:bob 2s infinite ease-in-out}@keyframes bob{50%{transform:translateY(-7px)}}
+h1,h2,h3{margin:5px 0 12px}h1{font-size:1.7rem}p{line-height:1.5}.muted{color:#806b58}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#fff5d8;border-radius:16px;padding:12px;text-align:center}.stat b{display:block;font-size:1.3rem}
+.progress{height:12px;background:#f0e6d5;border-radius:20px;overflow:hidden;margin:8px 0}.progress div{height:100%;background:var(--green);width:0%;transition:width .3s}
+.units,.game-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}.unit,.game{background:#fff8e8;border:1px solid #f0dfbd;border-radius:17px;padding:14px;text-align:left}
+.unit small,.game small{display:block;color:#806b58;margin-top:5px}.unit.selected{outline:3px solid #eab34b}
+.story{font-size:1.08rem;line-height:1.8;background:#fff9e9;padding:16px;border-radius:15px}.word{cursor:pointer;border-radius:5px;padding:1px 2px}.word:hover{background:#ffe29b}
+.feedback{margin-top:12px;padding:12px;border-radius:12px;background:#edf6e9}.answers{display:grid;gap:9px;margin:14px 0}.answers button{text-align:left;background:#f7efdf;box-shadow:none;border:2px solid transparent}.answers button.correct{border-color:var(--green);background:#e8f4e7}.answers button.wrong{border-color:#d66c59;background:#ffebe6}
+textarea{width:100%;min-height:130px;border:2px solid #ead9ba;border-radius:14px;padding:12px;resize:vertical;color:var(--brown);background:#fffdf8}
+footer{text-align:center;color:#927b65;font-size:.85rem;padding:20px}
+@media(min-width:650px){main{padding-top:25px}.hero{padding:34px}.rat{font-size:110px}}
+</style>
+</head>
+<body>
+<header><div class="brand">🐭 Rat-<span>ito</span></div><div class="points">🧀 <span id="points">0</span> puntos</div></header>
+<nav aria-label="Secciones">
+<button class="active" data-screen="home">🏠 Inicio</button><button data-screen="classroom">📚 Aula</button><button data-screen="reading">📖 Lectura</button><button data-screen="games">🎮 Juegos</button><button data-screen="writing">✍️ Escritura</button>
+</nav>
+<main>
+<section id="home" class="screen active">
+ <div class="card hero"><div class="rat" aria-label="Ratón">🐭</div><h1>¡Hola, explorador!</h1><p>Aprende inglés paso a paso con Rat-ito.</p><button onclick="go('classroom')">¡Vamos a jugar! 🚀</button></div>
+ <div class="card"><h2>Tu aventura</h2><div class="stats"><div class="stat">⭐<b id="homePoints">0</b><small>Puntos</small></div><div class="stat">📘<b id="doneCount">0</b><small>Actividades</small></div><div class="stat">🔥<b id="streak">1</b><small>Racha demo</small></div></div><p class="muted">Progreso general</p><div class="progress"><div id="overallBar"></div></div><small id="progressText">0% completado</small></div>
+</section>
+<section id="classroom" class="screen">
+ <h1>📚 Mi aula</h1><p>Elige una unidad para practicar vocabulario y gramática.</p>
+ <div class="units">
+  <button class="unit selected" onclick="selectUnit(this,'Greetings & Introductions')">👋 Greetings<small>Saludos y presentaciones</small></button>
+  <button class="unit" onclick="selectUnit(this,'My Family')">🏡 My Family<small>Familia y posesivos</small></button>
+  <button class="unit" onclick="selectUnit(this,'Food Around Us')">🍎 Food<small>Comida y preferencias</small></button>
+  <button class="unit" onclick="selectUnit(this,'Past Simple')">🕰️ Past Simple<small>Acciones del pasado</small></button>
+ </div>
+ <div class="card"><h2 id="unitTitle">Greetings & Introductions</h2><p id="unitDescription">Practica expresiones sencillas para saludar y presentarte.</p><button onclick="go('games')">Practicar esta unidad</button></div>
+</section>
+<section id="reading" class="screen">
+ <h1>📖 Reading time</h1><div class="card"><h2>A day with Rat-ito</h2><p class="muted">Lee la historia. Puedes escucharla con el botón de audio.</p>
+ <div class="story" id="story">Hello! My name is Rat-ito. I live in a little house. Every morning, I eat cheese and drink milk. Then, I go to school. I love learning English!</div>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button onclick="speakStory()">🔊 Escuchar</button><button class="secondary" onclick="stopSpeech()">⏹ Detener</button></div>
+ <p class="muted">Consejo: toca una palabra de la historia para escuchar su pronunciación (si tu navegador lo permite).</p>
+ </div>
+ <div class="card"><h3>Comprensión</h3><p>What does Rat-ito eat in the morning?</p><div class="answers" id="readingAnswers"></div><div id="readingFeedback" aria-live="polite"></div></div>
+</section>
+<section id="games" class="screen">
+ <h1>🎮 Zona de juegos</h1><p>Responde y gana puntos. ¡Inténtalo otra vez si te equivocas!</p>
+ <div class="card"><div class="muted" id="quizCount">Pregunta 1</div><h2 id="question">Choose the correct sentence:</h2><div class="answers" id="quizAnswers"></div><div id="quizFeedback" aria-live="polite"></div><button class="secondary" id="nextQuestion" onclick="nextQ()" style="display:none">Siguiente ➜</button></div>
+ <div class="game-grid"><div class="game">🔤 <b>Word builder</b><small>Ordena palabras para formar una oración.</small><button class="secondary" onclick="wordGame()">Jugar</button></div><div class="game">🧀 <b>Cheese challenge</b><small>Encuentra la palabra correcta.</small><button class="secondary" onclick="resetQuiz()">Reiniciar preguntas</button></div></div><div id="miniFeedback"></div>
+</section>
+<section id="writing" class="screen">
+ <h1>✍️ My little story</h1><div class="card"><p>Observa la idea y escribe unas oraciones en inglés. Puedes contar qué hace Rat-ito.</p><div style="font-size:55px;text-align:center">🐭 🧀 🏫</div><label for="storyText"><b>My story:</b></label><textarea id="storyText" placeholder="Rat-ito is a little mouse. He..."></textarea><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button onclick="reviewWriting()">Revisar mi texto</button><button class="secondary" onclick="clearWriting()">Borrar</button></div><div id="writingFeedback" class="feedback" style="display:none" aria-live="polite"></div></div>
+ <div class="card"><h3>💡 Helpful words</h3><p>mouse = ratón · cheese = queso · school = escuela · eat = comer · play = jugar · happy = feliz</p></div>
+</section>
+</main>
+<footer>Rat-ito · English Adventure 🧀<br>Versión inicial educativa</footer>
+<script>
+const state={points:Number(localStorage.getItem('ratitoPoints')||0),done:Number(localStorage.getItem('ratitoDone')||0),unit:'Greetings & Introductions',q:0,answered:false};
+const questions=[
+ {q:'Choose the correct greeting:',a:['Good morning!','I am cheese.','She are happy.'],correct:0,why:'“Good morning” se usa para saludar por la mañana.'},
+ {q:'Complete: She ___ my sister.',a:['am','is','are'],correct:1,why:'Con he, she o it usamos “is”.'},
+ {q:'What is the past of “play”?',a:['plays','playing','played'],correct:2,why:'El pasado regular de “play” es “played”.'},
+ {q:'Choose the correct sentence:',a:['They is students.','They are students.','They am students.'],correct:1,why:'Con “they” usamos “are”.'},
+ {q:'What does “cheese” mean?',a:['Queso','Leche','Pan'],correct:0,why:'“Cheese” significa queso.'}
+];
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='games')renderQ();}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.screen)));
+function update(){document.getElementById('points').textContent=state.points;document.getElementById('homePoints').textContent=state.points;document.getElementById('doneCount').textContent=state.done;let pct=Math.min(100,state.done*10);document.getElementById('overallBar').style.width=pct+'%';document.getElementById('progressText').textContent=pct+'% completado';localStorage.setItem('ratitoPoints',state.points);localStorage.setItem('ratitoDone',state.done)}
+function award(n=10){state.points+=n;state.done++;update()}
+function selectUnit(el,name){document.querySelectorAll('.unit').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');state.unit=name;document.getElementById('unitTitle').textContent=name;document.getElementById('unitDescription').textContent='Unidad seleccionada. Ve a los juegos para practicar inglés.'}
+function renderQ(){let item=questions[state.q];document.getElementById('quizCount').textContent=`Pregunta ${state.q+1} de ${questions.length}`;document.getElementById('question').textContent=item.q;document.getElementById('quizFeedback').textContent='';document.getElementById('nextQuestion').style.display='none';state.answered=false;let box=document.getElementById('quizAnswers');box.innerHTML='';item.a.forEach((a,i)=>{let b=document.createElement('button');b.textContent=a;b.onclick=()=>answer(i,b);box.appendChild(b)})}
+function answer(i,btn){if(state.answered)return;state.answered=true;let item=questions[state.q];let all=[...document.querySelectorAll('#quizAnswers button')];all[item.correct].classList.add('correct');let fb=document.getElementById('quizFeedback');if(i===item.correct){fb.className='feedback';fb.textContent='¡Correcto! '+item.why;award(10)}else{btn.classList.add('wrong');fb.className='feedback';fb.textContent='Casi. '+item.why}document.getElementById('nextQuestion').style.display='inline-block';}
+function nextQ(){state.q=(state.q+1)%questions.length;renderQ()}
+function resetQuiz(){state.q=0;renderQ();document.getElementById('miniFeedback').textContent='¡Preguntas reiniciadas!'}
+function wordGame(){let result=prompt('Ordena estas palabras: happy / is / Rat-ito');if(result&&result.trim().toLowerCase().replace(/[.!]/g,'').replace(/\s+/g,' ')==='rat-ito is happy'){document.getElementById('miniFeedback').textContent='¡Muy bien! Rat-ito is happy.';award(15)}else if(result!==null){document.getElementById('miniFeedback').textContent='Pista: primero va “Rat-ito”. ¡Inténtalo de nuevo!'}}
+const story='Hello! My name is Rat-ito. I live in a little house. Every morning, I eat cheese and drink milk. Then, I go to school. I love learning English!';
+function speakStory(){if(!('speechSynthesis'in window)){alert('Tu navegador no admite lectura de voz.');return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(story);u.lang='en-US';u.rate=.85;speechSynthesis.speak(u)}
+function stopSpeech(){if('speechSynthesis'in window)speechSynthesis.cancel()}
+document.getElementById('story').addEventListener('click',e=>{let w=e.target.textContent.trim();if(w&&'speechSynthesis'in window){let u=new SpeechSynthesisUtterance(w);u.lang='en-US';speechSynthesis.cancel();speechSynthesis.speak(u)}});
+function setupReading(){let box=document.getElementById('readingAnswers');['Cheese and milk','Rice and chicken','Only apples'].forEach((a,i)=>{let b=document.createElement('button');b.textContent=a;b.onclick=()=>{if(box.dataset.done)return;box.dataset.done='1';let f=document.getElementById('readingFeedback');if(i===0){f.className='feedback';f.textContent='Correct! Rat-ito eats cheese and drinks milk.';award(10)}else{f.className='feedback';f.textContent='Try again. Read the second and third sentences.'}};box.appendChild(b)})}
+function reviewWriting(){let val=document.getElementById('storyText').value.trim(),fb=document.getElementById('writingFeedback');fb.style.display='block';if(!val){fb.textContent='Escribe al menos una oración para recibir sugerencias.';return}let words=val.split(/\s+/).filter(Boolean).length;let tips=[];if(!/[.!?]$/.test(val))tips.push('Recuerda terminar tu oración con punto.');if(!/\b(is|am|are|has|have|likes|lives|eats|plays)\b/i.test(val))tips.push('Revisa si necesitas un verbo como is, has, likes o eats.');if(words<6)tips.push('Puedes ampliar tu historia con más detalles.');fb.textContent=tips.length?'¡Buen comienzo! '+tips.join(' '):'¡Buen trabajo! Tu texto tiene una idea y una estructura inicial. Revísalo una vez más.';award(5)}
+function clearWriting(){document.getElementById('storyText').value='';document.getElementById('writingFeedback').style.display='none'}
+setupReading();update();renderQ();
+</script>
+</body>
+</html>
